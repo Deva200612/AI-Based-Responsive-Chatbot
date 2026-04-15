@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduBot — AI Study Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Root ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #060910;
+      --surface:  #0d1117;
+      --card:     #111827;
+      --card2:    #1a2332;
+      --border:   #1f2937;
+      --border2:  #2d3748;
+      --acc:      #00d4aa;
+      --acc2:     #7c3aed;
+      --acc3:     #f59e0b;
+      --txt:      #f1f5f9;
+      --muted:    #6b7280;
+      --soft:     #9ca3af;
+      --math:     #3b82f6;
+      --sci:      #10b981;
+      --eng:      #f59e0b;
+      --gen:      #8b5cf6;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--txt);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated Background ──────────────────────────────────────── */
+    .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(90px); opacity: .10;
+      animation: drift 20s infinite alternate ease-in-out;
+    }
+    .orb1 { width:600px;height:600px;background:#7c3aed;top:-150px;left:-200px;animation-delay:0s }
+    .orb2 { width:500px;height:500px;background:#00d4aa;bottom:-150px;right:-150px;animation-delay:-7s }
+    .orb3 { width:350px;height:350px;background:#f59e0b;top:45%;left:55%;animation-delay:-14s }
+    @keyframes drift {
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(50px,40px) scale(1.12); }
+    }
+
+    /* ── Layout Wrapper ───────────────────────────────────────────── */
+    .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── NAVBAR ───────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(6,9,16,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: .85rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 900;
+      background: linear-gradient(90deg, #00d4aa, #7c3aed);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--soft); text-decoration: none; font-size: .85rem;
+      font-weight: 500; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--acc); }
+    .nav-badge {
+      background: rgba(0,212,170,.1);
+      border: 1px solid rgba(0,212,170,.3);
+      border-radius: 999px; padding: 4px 14px;
+      font-size: .72rem; font-weight: 600; color: var(--acc);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .dot-live {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--acc);
+      animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── HERO ─────────────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 4rem 1.5rem 2.5rem;
+      max-width: 680px; margin: 0 auto;
+    }
+    .hero-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,212,170,.07);
+      border: 1px solid rgba(0,212,170,.2);
+      border-radius: 999px; padding: 5px 18px;
+      font-size: .72rem; font-weight: 600;
+      color: var(--acc); letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 1.4rem;
+      animation: fadeDown .6s ease both;
+    }
+    .pulse-ring { width:8px;height:8px;border-radius:50%;background:var(--acc);position:relative; }
+    .pulse-ring::after {
+      content:''; position:absolute; inset:-3px; border-radius:50%;
+      border:1.5px solid var(--acc); animation: ping 1.5s infinite;
+    }
+    @keyframes ping { 0%{transform:scale(1);opacity:1} 100%{transform:scale(2.5);opacity:0} }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem,6vw,3.8rem);
+      font-weight: 900; line-height: 1.05;
+      margin-bottom: 1rem;
+      animation: fadeDown .7s .1s ease both;
+    }
+    .hero h1 .grad {
+      display: block;
+      background: linear-gradient(90deg, #00d4aa 0%, #7c3aed 50%, #f59e0b 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; background-size: 200%;
+      animation: gradShift 4s infinite alternate, fadeDown .7s .1s ease both;
+    }
+    @keyframes gradShift { 0%{background-position:0%} 100%{background-position:100%} }
+    .hero p {
+      color: var(--soft); font-size: 1rem; line-height: 1.75;
+      margin-bottom: 2rem;
+      animation: fadeDown .7s .2s ease both;
+    }
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Stats Row */
+    .stat-row {
+      display: flex; justify-content: center; gap: .8rem;
+      flex-wrap: wrap; margin-bottom: 2.5rem;
+      animation: fadeDown .7s .3s ease both;
+    }
+    .stat-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: .7rem 1.4rem;
+      text-align: center; min-width: 80px;
+    }
+    .stat-n { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--acc); }
+    .stat-l { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+
+    /* ── SUBJECT FILTER ───────────────────────────────────────────── */
+    .subj-nav {
+      display: flex; gap: .5rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 1.5rem;
+      animation: fadeDown .7s .35s ease both;
+    }
+    .subj-btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      padding: .4rem 1.1rem; border-radius: 999px;
+      font-size: .78rem; font-weight: 600; cursor: pointer;
+      color: var(--muted); font-family: 'Outfit', sans-serif;
+      transition: all .2s; display: flex; align-items: center; gap: 6px;
+    }
+    .subj-btn:hover { border-color: var(--acc); color: var(--acc); transform: translateY(-1px); }
+    .sb-all  { background:rgba(0,212,170,.12) !important;  border-color:#00d4aa !important; color:#00d4aa !important; }
+    .sb-math { background:rgba(59,130,246,.12) !important; border-color:#3b82f6 !important; color:#60a5fa !important; }
+    .sb-sci  { background:rgba(16,185,129,.12) !important; border-color:#10b981 !important; color:#34d399 !important; }
+    .sb-eng  { background:rgba(245,158,11,.12) !important; border-color:#f59e0b !important; color:#fbbf24 !important; }
+    .sb-gen  { background:rgba(139,92,246,.12) !important; border-color:#8b5cf6 !important; color:#a78bfa !important; }
+
+    /* ── MAIN LAYOUT ──────────────────────────────────────────────── */
+    .main-wrap {
+      max-width: 1000px; margin: 0 auto;
+      padding: 0 1rem 3rem; width: 100%;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 1.2rem; align-items: start;
+    }
+    @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+    /* ── SIDEBAR ──────────────────────────────────────────────────── */
+    .sidebar {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 1rem;
+      max-height: 580px; overflow-y: auto;
+      position: sticky; top: 80px;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+    .sidebar h4 {
+      font-size: .7rem; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--muted);
+      margin-bottom: .85rem; font-weight: 600;
+      padding: 0 .5rem;
+    }
+    .topic-item {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .45rem .75rem; border-radius: 9px;
+      cursor: pointer; transition: all .15s;
+      font-size: .8rem; color: var(--soft); margin-bottom: 2px;
+    }
+    .topic-item:hover { background: rgba(255,255,255,.06); color: var(--txt); }
+    .topic-item.active { background: rgba(0,212,170,.1); color: var(--acc); font-weight: 600; }
+    .topic-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .dot-math { background: #3b82f6; } .dot-sci { background: #10b981; }
+    .dot-eng  { background: #f59e0b; } .dot-gen { background: #8b5cf6; }
+
+    /* ── CHAT PANEL ───────────────────────────────────────────────── */
+    .chat-panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; overflow: hidden;
+      display: flex; flex-direction: column; height: 580px;
+    }
+    .chat-top {
+      background: linear-gradient(135deg, #0a0f1a, #111827);
+      padding: .9rem 1.2rem;
+      display: flex; align-items: center; gap: .8rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .bot-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: linear-gradient(135deg, #00d4aa, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0; position: relative;
+    }
+    .bot-icon::after {
+      content: ''; position: absolute; bottom: -2px; right: -2px;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: #22c55e; border: 2px solid var(--card);
+    }
+    .chat-top-info h3 { font-size: .9rem; font-weight: 700; color: var(--txt); margin: 0; }
+    .chat-top-info p  { font-size: .7rem; color: var(--muted); margin: 0; }
+    .chat-score { margin-left: auto; text-align: right; }
+    .score-lbl  { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .score-val  { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--acc); }
+
+    /* Messages */
+    .messages {
+      flex: 1; overflow-y: auto;
+      padding: 1.1rem; display: flex; flex-direction: column;
+      gap: .85rem; scroll-behavior: smooth;
+    }
+    .messages::-webkit-scrollbar { width: 3px; }
+    .messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+    .msg {
+      display: flex; gap: .6rem; max-width: 92%;
+      animation: msgIn .25s ease;
+    }
+    @keyframes msgIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg-bubble {
+      padding: .7rem 1rem; border-radius: 16px;
+      font-size: .83rem; line-height: 1.65;
+    }
+    .msg.bot .msg-bubble {
+      background: var(--card2); color: var(--txt);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .msg.user .msg-bubble {
+      background: linear-gradient(135deg, #00b894, #00cec9);
+      color: #fff; border-bottom-right-radius: 4px;
+    }
+    .msg-av {
+      width: 30px; height: 30px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0; align-self: flex-end;
+    }
+    .msg-av.bot  { background: linear-gradient(135deg,#00d4aa,#7c3aed); }
+    .msg-av.user { background: linear-gradient(135deg,#374151,#4b5563); }
+    .subj-badge {
+      display: inline-block; padding: 1px 8px; border-radius: 999px;
+      font-size: .64rem; font-weight: 600; margin-bottom: 5px;
+    }
+    .sb-math-badge { background:rgba(59,130,246,.18);  color:#60a5fa; }
+    .sb-sci-badge  { background:rgba(16,185,129,.18);  color:#34d399; }
+    .sb-eng-badge  { background:rgba(245,158,11,.18);  color:#fbbf24; }
+    .sb-gen-badge  { background:rgba(139,92,246,.18);  color:#a78bfa; }
+
+    /* Typing */
+    .typing-row { padding: 0 1.1rem .6rem; display: none; }
+    .typing-dots {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: .55rem .85rem;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 14px; border-bottom-left-radius: 4px;
+    }
+    .typing-dots span {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--acc); animation: dotBounce .9s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes dotBounce { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-7px)} }
+
+    /* Quick chips */
+    .quick-strip {
+      padding: .6rem 1rem; border-top: 1px solid var(--border);
+      display: flex; gap: .4rem; flex-wrap: wrap; flex-shrink: 0;
+    }
+    .qchip {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      padding: .3rem .7rem; border-radius: 999px;
+      font-size: .71rem; cursor: pointer; color: var(--soft);
+      font-family: 'Outfit', sans-serif; transition: all .18s;
+      white-space: nowrap;
+    }
+    .qchip:hover { border-color:var(--acc); color:var(--acc); background:rgba(0,212,170,.06); transform:translateY(-1px); }
+
+    /* Input area */
+    .input-row {
+      border-top: 1px solid var(--border);
+      padding: .75rem .9rem;
+      display: flex; gap: .6rem; background: var(--card);
+      flex-shrink: 0;
+    }
+    .chat-inp {
+      flex: 1; background: #0d1117;
+      border: 1px solid var(--border); border-radius: 999px;
+      padding: .55rem 1.1rem; font-size: .84rem;
+      font-family: 'Outfit', sans-serif; color: var(--txt); outline: none;
+      transition: border-color .2s;
+    }
+    .chat-inp::placeholder { color: var(--muted); }
+    .chat-inp:focus { border-color: var(--acc); }
+    .send-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #00d4aa, #7c3aed);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: transform .2s;
+    }
+    .send-btn:hover { transform: scale(1.08); }
+    .send-btn svg { width: 16px; height: 16px; fill: white; }
+
+    /* ── INFO CARDS BELOW CHAT ────────────────────────────────────── */
+    .info-strip {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: .8rem; margin-top: 1.2rem;
+    }
+    @media(max-width:600px){ .info-strip{ grid-template-columns:1fr; } }
+    .info-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1rem 1.1rem;
+    }
+    .info-card .ic-icon { font-size: 1.4rem; margin-bottom: .5rem; }
+    .info-card h4 { font-size: .82rem; font-weight: 700; margin-bottom: .3rem; }
+    .info-card p  { font-size: .76rem; color: var(--soft); line-height: 1.6; }
+
+    /* ── FOOTER ───────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: .5rem;
+    }
+    footer p { font-size: .76rem; color: var(--muted); }
+    footer span { font-size: .76rem; color: var(--muted); }
+    footer strong { color: var(--acc); }
+
+    /* ── Connection Banner ────────────────────────────────────────── */
+    #connBanner {
+      background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3);
+      border-radius: 10px; padding: .6rem 1rem;
+      font-size: .78rem; color: #fbbf24;
+      margin-bottom: 1rem; display: none;
+      align-items: center; gap: .5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <div class="page">
+
+    <!-- NAVBAR -->
+    <nav>
+      <div class="nav-logo">EduBot</div>
+      <div class="nav-links">
+        <a href="#chat-section">Chat</a>
+        <a href="#about-section">About</a>
+        <a href="#how-section">How It Works</a>
+      </div>
+      <div class="nav-badge">
+        <div class="dot-live"></div> AI Live
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="chat-section">
+      <div class="hero-chip">
+        <div class="pulse-ring"></div>
+        AI-Powered · 50+ Topics · NLP + Deep Learning
+      </div>
+      <h1>Your Smart<span class="grad">Study Companion</span></h1>
+      <p>EduBot helps students in grades 6–12 master Math, Science &amp; English with instant, accurate AI-powered explanations.</p>
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-n">50+</div><div class="stat-l">Topics</div></div>
+        <div class="stat-card"><div class="stat-n">BiLSTM</div><div class="stat-l">Model</div></div>
+        <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">Subjects</div></div>
+        <div class="stat-card"><div class="stat-n">Real-time</div><div class="stat-l">Answers</div></div>
+      </div>
+    </section>
+
+    <!-- SUBJECT FILTER -->
+    <div class="main-wrap">
+      <div class="subj-nav" id="subjNav">
+        <button class="subj-btn sb-all"  onclick="filterSubj('all',this)">🌐 All Topics</button>
+        <button class="subj-btn"          onclick="filterSubj('math',this)">📐 Mathematics</button>
+        <button class="subj-btn"          onclick="filterSubj('sci',this)">🔬 Science</button>
+        <button class="subj-btn"          onclick="filterSubj('eng',this)">📖 English</button>
+        <button class="subj-btn"          onclick="filterSubj('gen',this)">🧠 General</button>
+      </div>
+
+      <!-- Connection warning -->
+      <div id="connBanner">
+        ⚠️ Backend not connected — running in offline demo mode. Start <code>chatbot_backend.py</code> to use the full AI model.
+      </div>
+
+      <!-- LAYOUT -->
+      <div class="layout">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+          <h4>Topic Explorer</h4>
+          <div id="topicList"></div>
+        </div>
+
+        <!-- CHAT -->
+        <div class="chat-panel">
+          <div class="chat-top">
+            <div class="bot-icon">🎓</div>
+            <div class="chat-top-info">
+              <h3 id="chatTitle">EduBot &nbsp;<span style="font-size:.68rem;color:#22c55e;font-weight:500">● Online</span></h3>
+              <p id="topicLabel">Ask me any topic →</p>
+            </div>
+            <div class="chat-score">
+              <div class="score-lbl">Score</div>
+              <div class="score-val" id="scoreDisp">0 pts</div>
+            </div>
+          </div>
+
+          <div class="messages" id="msgs">
+            <div class="msg bot">
+              <div class="msg-av bot">🎓</div>
+              <div class="msg-bubble">
+                👋 Welcome to <strong>EduBot</strong>!<br><br>
+                I cover <strong>50+ topics</strong> across 📐 Math, 🔬 Science &amp; 📖 English.<br><br>
+                💡 <em>Try asking:</em> <strong>"explain photosynthesis"</strong>, <strong>"quadratic formula"</strong>, or <strong>"active passive voice"</strong><br><br>
+                🏆 Earn <strong>10 points</strong> for every question you ask!
+              </div>
+            </div>
+          </div>
+
+          <div class="typing-row" id="typingRow">
+            <div class="typing-dots"><span></span><span></span><span></span></div>
+          </div>
+
+          <div class="quick-strip" id="quickStrip">
+            <span class="qchip" onclick="qs('quadratic formula')">Quadratic Formula</span>
+            <span class="qchip" onclick="qs('photosynthesis')">Photosynthesis</span>
+            <span class="qchip" onclick="qs('active passive voice')">Active/Passive Voice</span>
+            <span class="qchip" onclick="qs('ohms law')">Ohm's Law</span>
+            <span class="qchip" onclick="qs('exam tips')">Exam Tips</span>
+          </div>
+
+          <div class="input-row">
+            <input class="chat-inp" id="inp"
+              placeholder="Ask any topic… e.g. 'laws of thermodynamics'"
+              onkeydown="if(event.key==='Enter')send()" />
+            <button class="send-btn" onclick="send()">
+              <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO CARDS -->
+      <div class="info-strip">
+        <div class="info-card">
+          <div class="ic-icon">🧠</div>
+          <h4>Bidirectional LSTM</h4>
+          <p>Processes text forwards &amp; backwards for deeper context understanding and higher accuracy.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">📚</div>
+          <h4>50+ Curriculum Topics</h4>
+          <p>Covers grades 6–12 syllabus across Math, Science and English with detailed explanations.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">⚡</div>
+          <h4>Real-time Answers</h4>
+          <p>Flask REST API backend returns AI responses in milliseconds with confidence scoring.</p>
+        </div>
+      </div>
+
+      <!-- ABOUT SECTION -->
+      <section id="about-section" style="margin-top:3rem">
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:1.2rem">About EduBot</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem">
+          <div class="info-card">
+            <div class="ic-icon">🎯</div>
+            <h4>Project Goal</h4>
+            <p>Build an AI-powered chatbot that helps school students get instant answers on curriculum topics using NLP and deep learning.</p>
+          </div>
+          <div class="info-card">
+            <div class="ic-icon">👥</div>
+            <h4>Target Users</h4>
+            <p>Students of grades 6–12, teachers, and parents who want quick topic-wise explanations and study support.</p>
+          </div>
+          <div class="info-card">
+            <div class="ic-icon">⚙️</div>
+            <h4>Model Architecture</h4>
+            <p>Double Bidirectional LSTM layers with Embedding + Dropout, trained for 250 epochs with Adam optimizer.</p>
+          </div>
+          <div class="info-card">
+            <div class="ic-icon">📊</div>
+            <h4>Training Details</h4>
+            <p>250 epochs · Batch size 8 · Vocab 5000 · Max length 20 · Confidence threshold: 50%</p>
+          </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div style="margin-top:1rem;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.2rem">
+          <h4 style="font-size:.85rem;font-weight:700;margin-bottom:.85rem">Tech Stack</h4>
+          <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+            <span style="background:rgba(59,130,246,.15);color:#60a5fa;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">Python 3.x</span>
+            <span style="background:rgba(16,185,129,.15);color:#34d399;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">TensorFlow / Keras</span>
+            <span style="background:rgba(99,102,241,.15);color:#a78bfa;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">Bidirectional LSTM</span>
+            <span style="background:rgba(245,158,11,.15);color:#fbbf24;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">NLP Tokenizer</span>
+            <span style="background:rgba(239,68,68,.15);color:#f87171;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">Flask REST API</span>
+            <span style="background:rgba(20,184,166,.15);color:#2dd4bf;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">Flask-CORS</span>
+            <span style="background:rgba(251,191,36,.15);color:#fcd34d;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">NumPy</span>
+            <span style="background:rgba(167,139,250,.15);color:#c4b5fd;border-radius:999px;padding:.3rem .85rem;font-size:.75rem;font-weight:600">HTML · CSS · JavaScript</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS -->
+      <section id="how-section" style="margin-top:3rem;margin-bottom:1rem">
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:1.2rem">How EduBot Works</h2>
+        <div style="display:flex;flex-direction:column;gap:.8rem">
+          <div class="info-card" style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#00d4aa,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">1</div>
+            <div><h4>User Input</h4><p>Student types a question. Frontend sends a POST request to Flask backend at <code>/chat</code>.</p></div>
+          </div>
+          <div class="info-card" style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#00d4aa,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">2</div>
+            <div><h4>Tokenization &amp; Padding</h4><p>Text is tokenized using Keras Tokenizer (vocab: 5000), padded to max length 20 tokens.</p></div>
+          </div>
+          <div class="info-card" style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#00d4aa,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">3</div>
+            <div><h4>BiLSTM Inference</h4><p>Double Bidirectional LSTM processes the sequence through Embedding → BiLSTM → BiLSTM → Dense layers, outputs softmax probabilities.</p></div>
+          </div>
+          <div class="info-card" style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#00d4aa,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">4</div>
+            <div><h4>Confidence Check</h4><p>If top intent confidence ≥ 50% → matched response. Below threshold → fallback message asking the student to rephrase.</p></div>
+          </div>
+          <div class="info-card" style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#00d4aa,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">5</div>
+            <div><h4>Response Sent to Frontend</h4><p>Flask returns JSON with <code>reply</code>, <code>intent</code>, and <code>confidence</code>. Frontend renders the formatted HTML response with subject badge.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>🎓 <strong>EduBot</strong> — AI Education Chatbot · College Mini Project 2025</p>
+      <span>Built with <strong>TensorFlow</strong> · <strong>Flask</strong> · <strong>HTML/CSS/JS</strong></span>
+    </footer>
+  </div>
+
+  <!-- ── JavaScript ────────────────────────────────────────────────────── -->
+  <script>
+    const API = "http://localhost:5000";
+    let score = 0;
+    let backendOnline = false;
+
+    // ── Intent data (offline fallback) ──────────────────────────────
+    const OFFLINE_INTENTS = [
+      {tag:"greeting",subj:"gen",label:"Greeting",patterns:["hi","hello","hey","start","howdy"],responses:["👋 Welcome to <strong>EduBot</strong>! Tell me your grade + topic to begin! 🎓"]},
+      {tag:"math_pythagoras",subj:"math",label:"Pythagoras Theorem",patterns:["pythagoras","hypotenuse","a square b square","right triangle"],responses:["📐 <strong>Pythagoras Theorem</strong><br><code>a² + b² = c²</code><br>c = hypotenuse<br>✅ a=3, b=4 → c=<strong>5</strong>"]},
+      {tag:"math_quadratic",subj:"math",label:"Quadratic Formula",patterns:["quadratic formula","quadratic equation","ax2","roots of equation"],responses:["📐 <strong>Quadratic Formula</strong><br><code>x = (−b ± √(b²−4ac)) / 2a</code><br>✅ x²−5x+6=0 → x=2 or x=3"]},
+      {tag:"math_simple_interest",subj:"math",label:"Simple Interest",patterns:["simple interest","si formula"],responses:["💰 <strong>SI = (P × R × T) / 100</strong><br>✅ P=5000, R=8%, T=3 → SI=<strong>₹1200</strong>"]},
+      {tag:"math_compound_interest",subj:"math",label:"Compound Interest",patterns:["compound interest","ci formula"],responses:["💰 <strong>A = P(1 + R/100)ⁿ</strong>, CI = A−P<br>✅ P=10000, R=10%, n=2 → CI=<strong>₹2100</strong>"]},
+      {tag:"math_area_circle",subj:"math",label:"Area of Circle",patterns:["area of circle","pi r square","circle area"],responses:["⭕ Area = <strong>πr²</strong> | Circumference = <strong>2πr</strong><br>✅ r=7 → Area=<strong>153.86 sq units</strong>"]},
+      {tag:"math_algebra",subj:"math",label:"Algebraic Identities",patterns:["algebraic identities","algebra formulas","a plus b square"],responses:["🔣 (a+b)²=a²+2ab+b² | (a−b)²=a²−2ab+b²<br>(a+b)(a−b)=a²−b²"]},
+      {tag:"math_statistics",subj:"math",label:"Mean Median Mode",patterns:["mean median mode","statistics","average"],responses:["📊 Mean=Sum/Count | Median=Middle | Mode=Most frequent<br>✅ 2,3,3,5,7 → Mean=4, Median=3, Mode=3"]},
+      {tag:"math_profit_loss",subj:"math",label:"Profit & Loss",patterns:["profit loss","profit formula","cp sp"],responses:["🛒 Profit=SP−CP | Profit%=(Profit/CP)×100<br>✅ CP=200, SP=250 → Profit%=<strong>25%</strong>"]},
+      {tag:"math_percentage",subj:"math",label:"Percentage",patterns:["percentage","percent"],responses:["% <strong>%=(Part/Whole)×100</strong><br>✅ 40/50 → <strong>80%</strong>"]},
+      {tag:"math_triangles",subj:"math",label:"Triangles",patterns:["triangle","equilateral isosceles","area of triangle"],responses:["🔺 Area=½×base×height | Angles sum=<strong>180°</strong><br>Types: Equilateral, Isosceles, Scalene"]},
+      {tag:"math_geometry",subj:"math",label:"3D Geometry",patterns:["volume surface area","cube cuboid","cylinder sphere","3d shapes"],responses:["📦 Cube: V=a³ | Cuboid: V=l×b×h<br>Cylinder: V=πr²h | Sphere: V=4/3πr³"]},
+      {tag:"math_lcm_hcf",subj:"math",label:"LCM & HCF",patterns:["lcm hcf","least common multiple","highest common factor"],responses:["🔢 <strong>LCM×HCF = Product of two numbers</strong><br>✅ 12&18: HCF=6, LCM=36"]},
+      {tag:"math_linear_equations",subj:"math",label:"Linear Equations",patterns:["linear equations","one variable","two variable"],responses:["📏 ax+b=0 → x=−b/a<br>✅ 2x+3=11 → x=<strong>4</strong>"]},
+      {tag:"math_ratio",subj:"math",label:"Ratio & Proportion",patterns:["ratio proportion","direct proportion","inverse proportion"],responses:["⚖️ Direct: y=kx | Inverse: xy=k<br>✅ 5 pens=₹25 → 8 pens=<strong>₹40</strong>"]},
+      {tag:"sci_photosynthesis",subj:"sci",label:"Photosynthesis",patterns:["photosynthesis","plants make food","chlorophyll"],responses:["🌿 <strong>6CO₂+6H₂O+sunlight → C₆H₁₂O₆+6O₂</strong><br>Occurs in chloroplasts. Produces glucose + oxygen."]},
+      {tag:"sci_newton",subj:"sci",label:"Newton's Laws",patterns:["newton laws","inertia","f equals ma","action reaction"],responses:["🍎 1️⃣ Inertia 2️⃣ F=ma 3️⃣ Action-Reaction<br>✅ Rocket launch = Law 3!"]},
+      {tag:"sci_ohms_law",subj:"sci",label:"Ohm's Law",patterns:["ohms law","ohm law","v equals ir","voltage current resistance"],responses:["⚡ <strong>V = I × R</strong><br>✅ V=12V, R=4Ω → I=<strong>3 Amperes</strong>"]},
+      {tag:"sci_mitosis",subj:"sci",label:"Mitosis",patterns:["mitosis","cell division","prophase metaphase","pmat"],responses:["🔬 PMAT: Prophase→Metaphase→Anaphase→Telophase<br>Result: <strong>2 identical daughter cells</strong>"]},
+      {tag:"sci_periodic_table",subj:"sci",label:"Periodic Table",patterns:["periodic table","elements","groups periods","atomic number"],responses:["⚗️ 118 elements | 7 periods | 18 groups<br>Atomic number=protons | Group 18=Noble gases"]},
+      {tag:"sci_acids_bases",subj:"sci",label:"Acids & Bases",patterns:["acids bases","ph scale","neutralization","ph value"],responses:["🧪 Acid: pH<7 | Base: pH>7 | Neutral: pH=7<br>Acid+Base → Salt+Water (Neutralization)"]},
+      {tag:"sci_gravitation",subj:"sci",label:"Gravitation",patterns:["gravitation","gravity","g value","gravitational force"],responses:["🌍 <strong>F=Gm₁m₂/r²</strong> | g=9.8 m/s²<br>Weight=mass×g | Moon g = Earth g/6"]},
+      {tag:"sci_sound",subj:"sci",label:"Sound Waves",patterns:["sound waves","speed of sound","frequency wavelength","echo"],responses:["🔊 Speed in air=343 m/s | v=fλ<br>Ultrasound>20000 Hz. Sound needs medium!"]},
+      {tag:"sci_light",subj:"sci",label:"Light & Optics",patterns:["light reflection refraction","speed of light","snells law"],responses:["💡 Speed=3×10⁸ m/s | Snell's Law: n₁sinθ₁=n₂sinθ₂<br>Convex=converging | Concave=diverging"]},
+      {tag:"sci_ecosystem",subj:"sci",label:"Ecosystem",patterns:["ecosystem","food chain","producers consumers","trophic levels"],responses:["🌱 Producers→Herbivores→Carnivores→Top predators<br>Only <strong>10%</strong> energy transfers to next level!"]},
+      {tag:"sci_human_body",subj:"sci",label:"Human Body",patterns:["human body","digestive system","circulatory system","respiratory system"],responses:["🫀 Heart(72bpm) | Lungs(O₂/CO₂) | 206 bones<br>37 trillion cells | Largest organ = skin!"]},
+      {tag:"sci_electricity",subj:"sci",label:"Electricity",patterns:["electric circuit","series parallel","electric power","watt"],responses:["⚡ Series: R=R1+R2 | Parallel: 1/R=1/R1+1/R2<br>P=VI=I²R | 1kWh=1 unit electricity"]},
+      {tag:"sci_atoms_molecules",subj:"sci",label:"Atoms & Molecules",patterns:["atoms molecules","atomic structure","protons neutrons","valency","ionic covalent"],responses:["⚛️ Shell capacity: K=2, L=8, M=18<br>Ionic=electron transfer | Covalent=electron sharing"]},
+      {tag:"sci_force_motion",subj:"sci",label:"Force & Motion",patterns:["force motion","velocity acceleration","speed distance time","kinetic energy"],responses:["🚀 Speed=D/T | a=(v−u)/t | KE=½mv²<br>Work=F×Distance (Joule) | Power=W/T (Watt)"]},
+      {tag:"eng_parts_speech",subj:"eng",label:"Parts of Speech",patterns:["parts of speech","noun verb adjective","pronoun adverb"],responses:["📝 8 Parts: Noun·Pronoun·Verb·Adjective·Adverb·Preposition·Conjunction·Interjection"]},
+      {tag:"eng_tenses",subj:"eng",label:"Tenses",patterns:["tenses","english tenses","present past future tense","12 tenses"],responses:["⏱ 12 Tenses: 3 times × 4 forms<br>Simple/Continuous/Perfect/Perfect Continuous"]},
+      {tag:"eng_active_passive",subj:"eng",label:"Active & Passive Voice",patterns:["active passive voice","passive voice","change active to passive"],responses:["🗣️ Active: Subject→Verb→Object<br>Passive: Object + be+V3 + by+Subject<br>Passive = is/am/are/was/were + V3"]},
+      {tag:"eng_figures_speech",subj:"eng",label:"Figures of Speech",patterns:["figures of speech","simile metaphor","personification","hyperbole","alliteration"],responses:["✍️ Simile(like/as) | Metaphor(direct) | Personification<br>Hyperbole(exaggeration) | Alliteration(consonant repetition)"]},
+      {tag:"eng_essay_writing",subj:"eng",label:"Essay Writing",patterns:["essay writing","essay structure","paragraph writing","formal writing"],responses:["✏️ Structure: Introduction(Hook+Thesis) → Body(Evidence) → Conclusion<br>Use: Furthermore, However, Therefore"]},
+      {tag:"eng_sentence_types",subj:"eng",label:"Types of Sentences",patterns:["types of sentences","simple compound complex","declarative interrogative"],responses:["📜 By structure: Simple/Compound/Complex<br>By purpose: Declarative/Interrogative/Imperative/Exclamatory"]},
+      {tag:"eng_punctuation",subj:"eng",label:"Punctuation",patterns:["punctuation","comma colon semicolon","apostrophe","full stop"],responses:["🔤 , Comma · . Full stop · ; Semicolon · : Colon<br>' Apostrophe (don't=do not) · \" \" Quotes(direct speech)"]},
+      {tag:"eng_comprehension",subj:"eng",label:"Reading Comprehension",patterns:["comprehension tips","reading comprehension","unseen passage"],responses:["📖 1.Skim → 2.Read questions → 3.Re-read → 4.Answer in own words<br>Never leave blanks!"]},
+      {tag:"eng_synonyms",subj:"eng",label:"Synonyms & Antonyms",patterns:["synonyms antonyms","vocabulary","opposite words","similar words"],responses:["📚 Beautiful↔Ugly | Brave↔Cowardly | Ancient↔Modern<br>Learn 5 new words daily!"]},
+      {tag:"eng_letter_writing",subj:"eng",label:"Letter Writing",patterns:["letter writing","formal letter","informal letter","application writing"],responses:["📮 Formal: Address→Date→Subject→Salutation→Body→Yours faithfully<br>Informal: Dear friend…Yours lovingly"]},
+      {tag:"eng_narration",subj:"eng",label:"Direct & Indirect Speech",patterns:["direct indirect speech","narration","reported speech","change direct to indirect"],responses:["💬 Direct: He said, \"I am happy.\"<br>Indirect: He said that he was happy.<br>am→was, will→would, can→could"]},
+      {tag:"gen_exam_tips",subj:"gen",label:"Exam Tips",patterns:["exam tips","score good marks","prepare for exam","revision tips","how to remember"],responses:["🏆 1.Active Recall 2.Spaced Repetition 3.Past Papers<br>4.Pomodoro(25+5) 5.Mind Maps | Sleep 8hrs before exam!"]},
+      {tag:"gen_study_plan",subj:"gen",label:"Study Plan",patterns:["study plan","timetable","study schedule","plan my studies"],responses:["📅 1.List chapters 2.Mark exam dates 3.Rotate subjects<br>Hard topics→morning | Revision every Sunday!"]},
+      {tag:"gen_motivation",subj:"gen",label:"Motivation",patterns:["motivation","how to focus","cant study","distracted","feeling lazy"],responses:["💪 Set small daily goals | Phone away while studying<br>Reward yourself after sessions! Progress > Perfection 🌟"]},
+      {tag:"thanks",subj:"gen",label:"Thanks",patterns:["thanks","thank you","thx","great","helpful"],responses:["😊 You're welcome! Keep asking — learning never stops! 📚"]},
+      {tag:"goodbye",subj:"gen",label:"Goodbye",patterns:["bye","goodbye","see you","quit"],responses:["👋 Bye! Keep studying hard — success is waiting! 🎓"]},
+    ];
+
+    const FALLBACK_MSGS = [
+      "🤔 I didn't understand. Try asking like: <strong>'explain photosynthesis'</strong> or <strong>'quadratic formula'</strong>",
+      "💡 Click any topic in the sidebar to explore! Or try: 'ohms law', 'mitosis', 'tenses'",
+      "📚 I cover Math, Science & English. Example: 'pythagoras theorem' or 'active passive voice'"
+    ];
+
+    // ── Check backend ────────────────────────────────────────────────
+    async function checkBackend() {
+      try {
+        const r = await fetch(API + "/health", { signal: AbortSignal.timeout(2000) });
+        if (r.ok) { backendOnline = true; return; }
+      } catch(e) {}
+      backendOnline = false;
+      document.getElementById("connBanner").style.display = "flex";
+    }
+
+    // ── Offline rule-based match ─────────────────────────────────────
+    function offlineMatch(text) {
+      const t = text.toLowerCase().trim();
+      let best = null, bestScore = 0;
+      for (const intent of OFFLINE_INTENTS) {
+        for (const p of intent.patterns) {
+          const words = p.split(" ");
+          let s = words.filter(w => t.includes(w)).length / Math.max(words.length, 1);
+          if (t === p || t.includes(p)) s = 1.0;
+          if (s > bestScore) { bestScore = s; best = intent; }
+        }
+      }
+      return bestScore >= 0.3 ? best : null;
+    }
+
+    // ── Send message ─────────────────────────────────────────────────
+    async function send() {
+      const inp = document.getElementById("inp");
+      const text = inp.value.trim();
+      if (!text) return;
+      addMsg(text, "user", null);
+      inp.value = "";
+      document.getElementById("typingRow").style.display = "block";
+      scrollChat();
+
+      if (backendOnline) {
+        try {
+          const res = await fetch(API + "/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text }),
+            signal: AbortSignal.timeout(5000)
+          });
+          const data = await res.json();
+          document.getElementById("typingRow").style.display = "none";
+          const subj = getSubjFromTag(data.intent);
+          addMsg(data.reply, "bot", subj);
+          updateScore();
+          return;
+        } catch(e) {
+          backendOnline = false;
+          document.getElementById("connBanner").style.display = "flex";
+        }
+      }
+
+      // Offline fallback
+      await new Promise(r => setTimeout(r, 700 + Math.random() * 400));
+      document.getElementById("typingRow").style.display = "none";
+      const intent = offlineMatch(text);
+      if (intent) {
+        const r = intent.responses[Math.floor(Math.random() * intent.responses.length)];
+        addMsg(r, "bot", intent.subj);
+        updateScore();
+      } else {
+        addMsg(FALLBACK_MSGS[Math.floor(Math.random() * FALLBACK_MSGS.length)], "bot", "gen");
+      }
+    }
+
+    function getSubjFromTag(tag) {
+      if (!tag) return null;
+      if (tag.startsWith("math")) return "math";
+      if (tag.startsWith("sci"))  return "sci";
+      if (tag.startsWith("eng"))  return "eng";
+      return "gen";
+    }
+
+    function updateScore() {
+      score += 10;
+      document.getElementById("scoreDisp").textContent = score + " pts";
+    }
+
+    // ── Add message ──────────────────────────────────────────────────
+    function addMsg(html, role, subj) {
+      const msgs = document.getElementById("msgs");
+      const div = document.createElement("div");
+      div.className = "msg " + role;
+      const av = document.createElement("div");
+      av.className = "msg-av " + (role === "user" ? "user" : "bot");
+      av.textContent = role === "user" ? "🙋" : "🎓";
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      if (role === "bot" && subj) {
+        const labels = {math:"Mathematics",sci:"Science",eng:"English",gen:"General"};
+        const cls    = {math:"sb-math-badge",sci:"sb-sci-badge",eng:"sb-eng-badge",gen:"sb-gen-badge"};
+        bubble.innerHTML = `<span class="subj-badge ${cls[subj]||''}">${labels[subj]||subj}</span><br>` + html;
+      } else {
+        bubble.innerHTML = html;
+      }
+      if (role === "user") { div.appendChild(bubble); div.appendChild(av); }
+      else                 { div.appendChild(av); div.appendChild(bubble); }
+      msgs.appendChild(div);
+      scrollChat();
+    }
+
+    function scrollChat() {
+      const msgs = document.getElementById("msgs");
+      setTimeout(() => { msgs.scrollTop = msgs.scrollHeight; }, 50);
+    }
+
+    // ── Quick send ───────────────────────────────────────────────────
+    function qs(t) { document.getElementById("inp").value = t; send(); }
+
+    // ── Sidebar topic builder ────────────────────────────────────────
+    const QUICK_CHIPS = {
+      all:  ["quadratic formula","photosynthesis","active passive voice","ohms law","exam tips"],
+      math: ["pythagoras theorem","quadratic formula","simple interest","compound interest","mean median mode"],
+      sci:  ["photosynthesis","newton laws","ohms law","mitosis","periodic table"],
+      eng:  ["active passive voice","parts of speech","figures of speech","essay writing","punctuation"],
+      gen:  ["exam tips","study plan","motivation"]
+    };
+
+    function buildSidebar(filter) {
+      const list = document.getElementById("topicList");
+      list.innerHTML = "";
+      const shown = filter === "all" ? OFFLINE_INTENTS : OFFLINE_INTENTS.filter(i => i.subj === filter);
+      shown.forEach(intent => {
+        const d = document.createElement("div");
+        d.className = "topic-item";
+        d.innerHTML = `<div class="topic-dot dot-${intent.subj}"></div>${intent.label}`;
+        d.onclick = () => {
+          document.querySelectorAll(".topic-item").forEach(x => x.classList.remove("active"));
+          d.classList.add("active");
+          document.getElementById("topicLabel").textContent = intent.label;
+          document.getElementById("inp").value = intent.patterns[0];
+          send();
+        };
+        list.appendChild(d);
+      });
+    }
+
+    function filterSubj(subj, btn) {
+      document.querySelectorAll(".subj-btn").forEach(b => {
+        b.className = "subj-btn";
+      });
+      const cls = {all:"sb-all",math:"sb-math",sci:"sb-sci",eng:"sb-eng",gen:"sb-gen"};
+      btn.classList.add(cls[subj] || "sb-all");
+      buildSidebar(subj);
+      const strip = document.getElementById("quickStrip");
+      strip.innerHTML = (QUICK_CHIPS[subj] || QUICK_CHIPS.all)
+        .map(t => `<span class="qchip" onclick="qs('${t}')">${t.split(" ").map(w=>w[0].toUpperCase()+w.slice(1)).join(" ")}</span>`)
+        .join("");
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────
+    buildSidebar("all");
+    checkBackend();
+  </script>
+</body>
+</html>

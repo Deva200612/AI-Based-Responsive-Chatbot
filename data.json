@@ -1,0 +1,639 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "hi",
+        "hello",
+        "hey",
+        "good morning",
+        "good evening",
+        "hai",
+        "hlo",
+        "start",
+        "howdy",
+        "what's up"
+      ],
+      "responses": [
+        "👋 Hello! I'm <strong>EduBot</strong> — your AI study assistant. Tell me your grade and topic to begin!",
+        "Hi there! 🎓 Which subject are you studying today? (Math / Science / English)"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "bye",
+        "goodbye",
+        "see you",
+        "exit",
+        "quit",
+        "stop",
+        "later",
+        "cya"
+      ],
+      "responses": [
+        "👋 Bye! Keep studying hard — success is waiting for you! 🎓",
+        "See you next time! Stay curious, stay brilliant! ✨"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "thanks",
+        "thank you",
+        "thx",
+        "nice",
+        "super",
+        "great",
+        "helpful",
+        "awesome",
+        "cool"
+      ],
+      "responses": [
+        "😊 You're welcome! Keep asking — learning never stops! 📚",
+        "🌟 Glad I could help! You're doing great — keep it up! 💪"
+      ]
+    },
+    {
+      "tag": "exam_tips",
+      "patterns": [
+        "exam tips",
+        "score good marks",
+        "prepare for exam",
+        "revision tips",
+        "how to remember",
+        "study tips",
+        "how to study"
+      ],
+      "responses": [
+        "🏆 <strong>Top Exam Strategies</strong><br>1. <strong>Active Recall</strong> – test yourself, don't just re-read<br>2. <strong>Spaced Repetition</strong> – review after 1, 3, 7, 14 days<br>3. <strong>Past Papers</strong> – do last 5 years minimum<br>4. <strong>Pomodoro</strong> – 25 min study + 5 min break<br>5. <strong>Mind Maps</strong> – visual revision<br>📌 Sleep 8 hrs before exam — memory consolidates during sleep!"
+      ]
+    },
+    {
+      "tag": "study_plan",
+      "patterns": [
+        "study plan",
+        "make timetable",
+        "study schedule",
+        "how to study daily",
+        "plan my studies",
+        "daily routine study"
+      ],
+      "responses": [
+        "📅 <strong>How to Make a Study Plan</strong><br>1. List all subjects + chapters<br>2. Mark exam dates on calendar<br>3. Assign 2–3 subjects/day (rotate)<br>4. Hard subjects → morning (peak focus)<br>5. Revision day every Sunday<br>💡 Tell me your grade + subjects + exam date → I'll guide your plan!"
+      ]
+    },
+    {
+      "tag": "motivation",
+      "patterns": [
+        "motivation",
+        "how to focus",
+        "cant study",
+        "distracted",
+        "no motivation",
+        "feeling lazy",
+        "stressed about exam"
+      ],
+      "responses": [
+        "💪 <strong>Stay Motivated!</strong><br>🎯 Set small daily goals (not weekly)<br>📱 Phone in another room while studying<br>🏅 Reward yourself after each session<br>👥 Study group = accountability<br>🌟 Remember WHY you're studying — your future self will thank you!"
+      ]
+    },
+    {
+      "tag": "math_pythagoras",
+      "patterns": [
+        "pythagoras",
+        "pythagoras theorem",
+        "hypotenuse formula",
+        "a square plus b square",
+        "right triangle formula",
+        "pythagorean theorem"
+      ],
+      "responses": [
+        "📐 <strong>Pythagoras Theorem</strong><br><code>a² + b² = c²</code><br>c = hypotenuse (longest side)<br>✅ Example: a=3, b=4 → c=√(9+16)=<strong>5</strong><br>📌 Only works for right-angled triangles!"
+      ]
+    },
+    {
+      "tag": "math_quadratic",
+      "patterns": [
+        "quadratic formula",
+        "quadratic equation",
+        "solve quadratic",
+        "ax2 bx c",
+        "roots of equation",
+        "discriminant"
+      ],
+      "responses": [
+        "📐 <strong>Quadratic Formula</strong><br><code>x = (−b ± √(b²−4ac)) / 2a</code><br>For: ax² + bx + c = 0<br>✅ x²−5x+6=0 → x=2 or x=3<br>🔑 Discriminant (b²−4ac):<br>+ve → 2 real roots | 0 → 1 root | −ve → no real roots"
+      ]
+    },
+    {
+      "tag": "math_simple_interest",
+      "patterns": [
+        "simple interest",
+        "si formula",
+        "calculate simple interest",
+        "what is simple interest"
+      ],
+      "responses": [
+        "💰 <strong>Simple Interest</strong><br><code>SI = (P × R × T) / 100</code><br>P=Principal, R=Rate%, T=Time(years)<br>✅ P=5000, R=8%, T=3 → SI = <strong>₹1200</strong><br>Amount = P + SI"
+      ]
+    },
+    {
+      "tag": "math_compound_interest",
+      "patterns": [
+        "compound interest",
+        "ci formula",
+        "compound interest formula",
+        "compounded annually"
+      ],
+      "responses": [
+        "💰 <strong>Compound Interest</strong><br><code>A = P(1 + R/100)ⁿ</code><br>CI = A − P<br>✅ P=10000, R=10%, n=2 → A=12100, CI=<strong>₹2100</strong><br>📌 CI > SI (except 1st year). Banks use CI!"
+      ]
+    },
+    {
+      "tag": "math_area_circle",
+      "patterns": [
+        "area of circle",
+        "circle area formula",
+        "pi r square",
+        "area circle",
+        "circumference of circle"
+      ],
+      "responses": [
+        "⭕ <strong>Circle Formulas</strong><br>Area = <code>πr²</code><br>Circumference = <code>2πr</code><br>✅ r=7 → Area = 3.14×49 = <strong>153.86 sq units</strong><br>Circumference = 2×3.14×7 = <strong>43.96 units</strong>"
+      ]
+    },
+    {
+      "tag": "math_triangles",
+      "patterns": [
+        "types of triangles",
+        "triangle properties",
+        "equilateral isosceles scalene",
+        "triangle angles",
+        "area of triangle"
+      ],
+      "responses": [
+        "🔺 <strong>Triangles</strong><br>By sides: Equilateral(3=), Isosceles(2=), Scalene(all≠)<br>By angles: Acute(<90°), Right(=90°), Obtuse(>90°)<br>Area = <code>½ × base × height</code><br>📌 Sum of all angles = <strong>180°</strong> always!"
+      ]
+    },
+    {
+      "tag": "math_percentage",
+      "patterns": [
+        "percentage formula",
+        "how to calculate percentage",
+        "percent",
+        "percentage increase decrease",
+        "profit percentage"
+      ],
+      "responses": [
+        "% <strong>Percentage</strong><br><code>% = (Part/Whole) × 100</code><br>Increase%: <code>((New−Old)/Old)×100</code><br>✅ 40 out of 50 → (40/50)×100 = <strong>80%</strong><br>📌 Used in profit/loss, marks, growth!"
+      ]
+    },
+    {
+      "tag": "math_lcm_hcf",
+      "patterns": [
+        "lcm hcf",
+        "lcm formula",
+        "hcf formula",
+        "least common multiple",
+        "highest common factor",
+        "gcd"
+      ],
+      "responses": [
+        "🔢 <strong>LCM & HCF</strong><br>HCF = Greatest common factor<br>LCM = Least common multiple<br><code>LCM × HCF = Product of two numbers</code><br>✅ 12 & 18: HCF=6, LCM=36 → 6×36=216=12×18 ✓<br>📌 Use prime factorization method!"
+      ]
+    },
+    {
+      "tag": "math_algebra",
+      "patterns": [
+        "algebraic identities",
+        "algebra formulas",
+        "a plus b whole square",
+        "a minus b square",
+        "algebraic expressions"
+      ],
+      "responses": [
+        "🔣 <strong>Key Algebraic Identities</strong><br>(a+b)² = a²+2ab+b²<br>(a−b)² = a²−2ab+b²<br>(a+b)(a−b) = a²−b²<br>(a+b)³ = a³+3a²b+3ab²+b³<br>📌 Memorise these — they appear everywhere in algebra!"
+      ]
+    },
+    {
+      "tag": "math_statistics",
+      "patterns": [
+        "mean median mode",
+        "statistics formula",
+        "average formula",
+        "central tendency",
+        "arithmetic mean"
+      ],
+      "responses": [
+        "📊 <strong>Mean, Median & Mode</strong><br><strong>Mean</strong> = Sum of values ÷ Count<br><strong>Median</strong> = Middle value (sorted list)<br><strong>Mode</strong> = Most frequent value<br>✅ Data: 2,3,3,5,7 → Mean=4, Median=3, Mode=3<br>📌 For even count: Median = avg of 2 middle values"
+      ]
+    },
+    {
+      "tag": "math_profit_loss",
+      "patterns": [
+        "profit loss",
+        "profit formula",
+        "loss formula",
+        "selling price",
+        "cost price",
+        "cp sp"
+      ],
+      "responses": [
+        "🛒 <strong>Profit & Loss</strong><br>Profit = SP − CP | Loss = CP − SP<br><code>Profit% = (Profit/CP)×100</code><br><code>Discount% = (Discount/MP)×100</code><br>✅ CP=200, SP=250 → Profit=50, Profit%=<strong>25%</strong>"
+      ]
+    },
+    {
+      "tag": "math_ratio",
+      "patterns": [
+        "ratio proportion",
+        "ratio formula",
+        "direct proportion",
+        "inverse proportion",
+        "unitary method"
+      ],
+      "responses": [
+        "⚖️ <strong>Ratio & Proportion</strong><br>Ratio a:b = a/b<br>Direct: y∝x → y=kx (both increase together)<br>Inverse: y∝1/x → xy=k (one increases, other decreases)<br>✅ 5 pens cost ₹25 → 8 pens = <strong>₹40</strong> (direct)"
+      ]
+    },
+    {
+      "tag": "math_linear_equations",
+      "patterns": [
+        "linear equations",
+        "solve linear equation",
+        "one variable",
+        "two variable equations",
+        "simultaneous equations"
+      ],
+      "responses": [
+        "📏 <strong>Linear Equations</strong><br>1 variable: <code>ax + b = 0 → x = −b/a</code><br>2 variables: Use substitution or elimination<br>✅ 2x + 3 = 11 → 2x = 8 → x = <strong>4</strong><br>📌 Linear means highest power of variable = 1"
+      ]
+    },
+    {
+      "tag": "math_geometry",
+      "patterns": [
+        "geometry formulas",
+        "volume surface area",
+        "cube cuboid",
+        "cylinder sphere",
+        "3d shapes"
+      ],
+      "responses": [
+        "📦 <strong>3D Geometry Formulas</strong><br>Cube: Volume=a³, SA=6a²<br>Cuboid: Volume=l×b×h, SA=2(lb+bh+lh)<br>Cylinder: Volume=πr²h, CSA=2πrh<br>Sphere: Volume=4/3πr³, SA=4πr²<br>📌 Learn these for board exams!"
+      ]
+    },
+    {
+      "tag": "sci_photosynthesis",
+      "patterns": [
+        "photosynthesis",
+        "how plants make food",
+        "chlorophyll",
+        "light reaction dark reaction",
+        "plant food"
+      ],
+      "responses": [
+        "🌿 <strong>Photosynthesis</strong><br><code>6CO₂ + 6H₂O + sunlight → C₆H₁₂O₆ + 6O₂</code><br>📌 Occurs in <strong>chloroplasts</strong> (chlorophyll pigment)<br>Light reaction: thylakoid (ATP produced)<br>Dark reaction: stroma (glucose produced)<br>Output: Glucose (food) + Oxygen released"
+      ]
+    },
+    {
+      "tag": "sci_newton",
+      "patterns": [
+        "newton laws",
+        "newtons laws of motion",
+        "inertia",
+        "f equals ma",
+        "action reaction",
+        "first second third law of motion"
+      ],
+      "responses": [
+        "🍎 <strong>Newton's 3 Laws of Motion</strong><br>1️⃣ <strong>Inertia:</strong> Object stays at rest/motion unless external force acts<br>2️⃣ <strong>F = ma:</strong> Force = mass × acceleration<br>3️⃣ <strong>Action–Reaction:</strong> Every action → equal & opposite reaction<br>✅ Rocket launch = Law 3! Walking = Law 3!"
+      ]
+    },
+    {
+      "tag": "sci_ohms_law",
+      "patterns": [
+        "ohms law",
+        "ohm law",
+        "voltage current resistance",
+        "v equals ir",
+        "electric circuit"
+      ],
+      "responses": [
+        "⚡ <strong>Ohm's Law</strong><br><code>V = I × R</code><br>V=Voltage(V), I=Current(A), R=Resistance(Ω)<br>✅ V=12V, R=4Ω → I = 12/4 = <strong>3 Amperes</strong><br>📌 More resistance → less current. Series: R total = R1+R2"
+      ]
+    },
+    {
+      "tag": "sci_mitosis",
+      "patterns": [
+        "mitosis",
+        "cell division",
+        "phases of mitosis",
+        "prophase metaphase anaphase telophase",
+        "what is mitosis"
+      ],
+      "responses": [
+        "🔬 <strong>Mitosis (Cell Division)</strong><br>Remember: <strong>PMAT</strong><br>P → Prophase (chromosomes condense & become visible)<br>M → Metaphase (line up at cell equator)<br>A → Anaphase (sister chromatids pulled apart)<br>T → Telophase (nuclear envelope reforms)<br>Result: <strong>2 identical daughter cells</strong> (same DNA)"
+      ]
+    },
+    {
+      "tag": "sci_periodic_table",
+      "patterns": [
+        "periodic table",
+        "elements",
+        "groups periods",
+        "atomic number",
+        "valence electrons",
+        "mendeleev"
+      ],
+      "responses": [
+        "⚗️ <strong>Periodic Table</strong><br>118 elements | 7 periods | 18 groups<br>Group 1 = Alkali metals | Group 17 = Halogens | Group 18 = Noble gases<br>Metals (left) | Non-metals (right) | Metalloids (staircase)<br>📌 Atomic number = protons | Mass number = protons + neutrons"
+      ]
+    },
+    {
+      "tag": "sci_acids_bases",
+      "patterns": [
+        "acids bases",
+        "ph scale",
+        "acid base",
+        "neutralization",
+        "ph value",
+        "indicators litmus"
+      ],
+      "responses": [
+        "🧪 <strong>Acids & Bases</strong><br>Acid: pH < 7 (HCl, H₂SO₄, vinegar, lemon)<br>Base: pH > 7 (NaOH, NH₃, soap, baking soda)<br>Neutral: pH = 7 (pure water)<br>Neutralization: Acid + Base → Salt + Water<br>📌 Litmus: red in acid, blue in base"
+      ]
+    },
+    {
+      "tag": "sci_gravitation",
+      "patterns": [
+        "gravitation",
+        "gravity",
+        "g value",
+        "gravitational force",
+        "universal law of gravitation",
+        "free fall"
+      ],
+      "responses": [
+        "🌍 <strong>Gravitation</strong><br><code>F = Gm₁m₂/r²</code><br>G = 6.67×10⁻¹¹ Nm²/kg²<br>g (Earth) = <strong>9.8 m/s²</strong><br>📌 Weight = mass × g<br>Moon g = Earth g / 6 (you weigh less on moon!)<br>Free fall: all objects fall at same rate (ignoring air resistance)"
+      ]
+    },
+    {
+      "tag": "sci_sound",
+      "patterns": [
+        "sound waves",
+        "speed of sound",
+        "frequency wavelength",
+        "ultrasound",
+        "longitudinal wave",
+        "echo"
+      ],
+      "responses": [
+        "🔊 <strong>Sound Waves</strong><br>Speed in air ≈ <strong>343 m/s</strong> (at 20°C)<br>Speed order: solid > liquid > gas<br><code>v = fλ</code> (velocity = frequency × wavelength)<br>Ultrasound: >20,000 Hz (medical imaging)<br>Infrasound: <20 Hz<br>📌 Sound needs a medium — cannot travel in vacuum!"
+      ]
+    },
+    {
+      "tag": "sci_light",
+      "patterns": [
+        "light reflection refraction",
+        "optics",
+        "speed of light",
+        "snells law",
+        "refractive index",
+        "lens mirror"
+      ],
+      "responses": [
+        "💡 <strong>Light & Optics</strong><br>Speed of light = <strong>3×10⁸ m/s</strong> (vacuum)<br>Reflection: angle of incidence = angle of reflection<br>Snell's Law: <code>n₁sinθ₁ = n₂sinθ₂</code><br>Convex lens: converging | Concave lens: diverging<br>📌 Rainbow = dispersion of white light by water droplets!"
+      ]
+    },
+    {
+      "tag": "sci_ecosystem",
+      "patterns": [
+        "ecosystem",
+        "food chain",
+        "food web",
+        "producers consumers decomposers",
+        "trophic levels",
+        "biodiversity"
+      ],
+      "responses": [
+        "🌱 <strong>Ecosystem & Food Chain</strong><br>Producers → Primary Consumers → Secondary → Tertiary<br>(Plants → Herbivores → Carnivores → Top predators)<br>Energy transfer: only <strong>10%</strong> moves to next trophic level<br>📌 Decomposers (fungi/bacteria) recycle nutrients back to soil"
+      ]
+    },
+    {
+      "tag": "sci_human_body",
+      "patterns": [
+        "human body systems",
+        "digestive system",
+        "circulatory system",
+        "respiratory system",
+        "nervous system",
+        "organ systems"
+      ],
+      "responses": [
+        "🫀 <strong>Human Body Systems</strong><br>🫁 Respiratory: lungs exchange O₂/CO₂<br>❤️ Circulatory: heart pumps blood (~72 bpm)<br>🍽️ Digestive: mouth → stomach → small intestine → large intestine<br>🧠 Nervous: brain + spinal cord + nerves<br>📌 206 bones | 37 trillion cells | Largest organ = skin!"
+      ]
+    },
+    {
+      "tag": "sci_electricity",
+      "patterns": [
+        "electric circuit",
+        "series parallel circuit",
+        "kirchhoff",
+        "electric power",
+        "watt joule",
+        "current electricity"
+      ],
+      "responses": [
+        "⚡ <strong>Electricity</strong><br>Series: same current, voltages add: R_total = R1+R2<br>Parallel: same voltage, currents add: 1/R = 1/R1 + 1/R2<br><code>Power P = VI = I²R = V²/R</code><br>✅ P = 10V × 2A = <strong>20 Watts</strong><br>📌 1 kWh = 1 unit of electricity (billing unit)"
+      ]
+    },
+    {
+      "tag": "sci_atoms_molecules",
+      "patterns": [
+        "atoms molecules",
+        "atomic structure",
+        "protons neutrons electrons",
+        "valency",
+        "chemical bonding",
+        "ionic covalent"
+      ],
+      "responses": [
+        "⚛️ <strong>Atoms & Molecules</strong><br>Atom: protons + neutrons (nucleus) + electrons (shells)<br>Shell capacity: K=2, L=8, M=18<br>Valency = electrons needed to complete outer shell<br>Ionic bond: electron transfer | Covalent bond: electron sharing<br>📌 NaCl = ionic | H₂O = covalent"
+      ]
+    },
+    {
+      "tag": "sci_force_motion",
+      "patterns": [
+        "force and motion",
+        "types of force",
+        "velocity acceleration",
+        "speed distance time",
+        "kinetic potential energy"
+      ],
+      "responses": [
+        "🚀 <strong>Force & Motion</strong><br>Speed = Distance/Time<br>Velocity = Displacement/Time (has direction)<br>Acceleration = (v−u)/t<br>KE = ½mv² | PE = mgh<br>📌 Work = Force × Distance (unit: Joule)<br>Power = Work/Time (unit: Watt)"
+      ]
+    },
+    {
+      "tag": "eng_parts_speech",
+      "patterns": [
+        "parts of speech",
+        "noun verb adjective",
+        "types of words",
+        "pronoun adverb",
+        "conjunction preposition",
+        "interjection"
+      ],
+      "responses": [
+        "📝 <strong>8 Parts of Speech</strong><br>1. <strong>Noun</strong> – name (Delhi, book, joy)<br>2. <strong>Pronoun</strong> – replaces noun (he, she, they)<br>3. <strong>Verb</strong> – action/state (run, is, feels)<br>4. <strong>Adjective</strong> – describes noun (big, red, happy)<br>5. <strong>Adverb</strong> – modifies verb (quickly, very)<br>6. <strong>Preposition</strong> – position (in, on, at, under)<br>7. <strong>Conjunction</strong> – joins (and, but, or, because)<br>8. <strong>Interjection</strong> – emotion (Wow! Oh! Ouch!)"
+      ]
+    },
+    {
+      "tag": "eng_tenses",
+      "patterns": [
+        "tenses",
+        "english tenses",
+        "present tense",
+        "past tense",
+        "future tense",
+        "12 tenses",
+        "types of tenses"
+      ],
+      "responses": [
+        "⏱ <strong>12 Tenses (3×4)</strong><br><strong>Present:</strong> Simple | Continuous | Perfect | Perfect Continuous<br><strong>Past:</strong> Simple | Continuous | Perfect | Perfect Continuous<br><strong>Future:</strong> Simple | Continuous | Perfect | Perfect Continuous<br>✅ I eat (Simple Present) | I am eating (Present Continuous) | I have eaten (Present Perfect)"
+      ]
+    },
+    {
+      "tag": "eng_active_passive",
+      "patterns": [
+        "active passive voice",
+        "active voice",
+        "passive voice",
+        "change active to passive",
+        "voice grammar"
+      ],
+      "responses": [
+        "🗣️ <strong>Active vs Passive Voice</strong><br>Active: Subject → Verb → Object<br><em>'The dog bit the man.'</em><br>Passive: Object → be+V3 → by+Subject<br><em>'The man was bitten by the dog.'</em><br>📌 Passive formula = is/am/are/was/were + V3<br>Use passive when doer is unknown or unimportant"
+      ]
+    },
+    {
+      "tag": "eng_figures_speech",
+      "patterns": [
+        "figures of speech",
+        "simile metaphor",
+        "personification",
+        "alliteration",
+        "hyperbole",
+        "onomatopoeia",
+        "oxymoron"
+      ],
+      "responses": [
+        "✍️ <strong>Figures of Speech</strong><br>🔸 <strong>Simile:</strong> like/as → <em>'brave as a lion'</em><br>🔸 <strong>Metaphor:</strong> direct → <em>'life is a journey'</em><br>🔸 <strong>Personification:</strong> <em>'the wind whispered'</em><br>🔸 <strong>Hyperbole:</strong> <em>'I've told you a million times'</em><br>🔸 <strong>Alliteration:</strong> <em>'Peter Piper picked...'</em><br>🔸 <strong>Onomatopoeia:</strong> sound words → buzz, splash, hiss"
+      ]
+    },
+    {
+      "tag": "eng_essay_writing",
+      "patterns": [
+        "essay writing",
+        "how to write essay",
+        "essay structure",
+        "paragraph writing",
+        "introduction conclusion",
+        "formal writing"
+      ],
+      "responses": [
+        "✏️ <strong>Essay Writing Structure</strong><br>📌 <strong>Introduction (3–4 lines):</strong> Hook + Background + Thesis<br>📌 <strong>Body (2–3 paragraphs):</strong> Topic sentence + Evidence + Explanation<br>📌 <strong>Conclusion:</strong> Restate thesis + Summary + Closing thought<br>💡 Linking words: Furthermore, However, Therefore, In conclusion, Nevertheless"
+      ]
+    },
+    {
+      "tag": "eng_sentence_types",
+      "patterns": [
+        "types of sentences",
+        "simple compound complex",
+        "declarative interrogative",
+        "exclamatory imperative",
+        "sentence structure"
+      ],
+      "responses": [
+        "📜 <strong>Types of Sentences</strong><br>By structure:<br>• Simple (1 clause) | Compound (2 independent) | Complex (1 independent + 1 dependent)<br>By purpose:<br>• Declarative: <em>She reads books.</em><br>• Interrogative: <em>Does she read?</em><br>• Imperative: <em>Read this!</em><br>• Exclamatory: <em>What a book!</em>"
+      ]
+    },
+    {
+      "tag": "eng_punctuation",
+      "patterns": [
+        "punctuation",
+        "comma colon semicolon",
+        "apostrophe",
+        "punctuation marks",
+        "full stop",
+        "how to use comma"
+      ],
+      "responses": [
+        "🔤 <strong>Punctuation Guide</strong><br>, Comma – pause, list, clauses<br>. Full stop – end of sentence<br>; Semicolon – join related clauses<br>: Colon – introduce list/explanation<br>' Apostrophe – possession (cat's) or contraction (don't)<br>\" \" Quotes – direct speech<br>📌 Common mistake: <em>its</em> (possession) vs <em>it's</em> (it is)"
+      ]
+    },
+    {
+      "tag": "eng_comprehension",
+      "patterns": [
+        "comprehension tips",
+        "reading comprehension",
+        "how to answer comprehension",
+        "passage questions",
+        "unseen passage"
+      ],
+      "responses": [
+        "📖 <strong>Comprehension Strategy</strong><br>1. Skim the passage first (30 sec overview)<br>2. Read all questions carefully<br>3. Re-read passage for specific answers<br>4. Answer in your own words (unless asked to quote)<br>5. Never leave blanks — attempt every question!<br>📌 Marks for comprehension are easy to score — be thorough!"
+      ]
+    },
+    {
+      "tag": "eng_synonyms",
+      "patterns": [
+        "synonyms antonyms",
+        "vocabulary",
+        "word meanings",
+        "opposite words",
+        "similar words",
+        "vocabulary building"
+      ],
+      "responses": [
+        "📚 <strong>Key Synonyms & Antonyms</strong><br>Beautiful ↔ Ugly (Gorgeous, Pretty)<br>Brave ↔ Cowardly (Courageous, Bold)<br>Ancient ↔ Modern (Old, Archaic)<br>Transparent ↔ Opaque (Clear, Obvious)<br>Abundant ↔ Scarce (Plentiful, Ample)<br>📌 Build vocabulary: learn 5 new words daily — it's a game changer!"
+      ]
+    },
+    {
+      "tag": "eng_letter_writing",
+      "patterns": [
+        "letter writing",
+        "formal letter",
+        "informal letter",
+        "how to write letter",
+        "application writing",
+        "complaint letter"
+      ],
+      "responses": [
+        "📮 <strong>Letter Writing Format</strong><br><strong>Formal Letter:</strong><br>Sender's address → Date → Receiver's address → Subject → Salutation (Dear Sir/Ma'am) → Body (3 para) → Closing (Yours faithfully) → Signature<br><strong>Informal Letter:</strong><br>Sender's address → Date → Salutation (Dear friend) → Body → Closing (Yours lovingly)<br>📌 Subject line is mandatory in formal letters!"
+      ]
+    },
+    {
+      "tag": "eng_narration",
+      "patterns": [
+        "direct indirect speech",
+        "narration",
+        "reported speech",
+        "change direct to indirect",
+        "direct speech rules"
+      ],
+      "responses": [
+        "💬 <strong>Direct & Indirect Speech</strong><br>Direct: <em>He said, \"I am happy.\"</em><br>Indirect: <em>He said that he was happy.</em><br>Tense changes: am→was, is→was, will→would, can→could<br>Pronoun changes: I→he/she, we→they, my→his/her<br>📌 Remove comma and quotation marks in indirect!"
+      ]
+    },
+    {
+      "tag": "fallback",
+      "patterns": [],
+      "responses": [
+        "🤔 I didn't understand. Try asking like: <strong>'explain photosynthesis'</strong> or <strong>'quadratic formula'</strong>",
+        "💡 Hint: Ask topic-wise! Examples: 'ohms law', 'mitosis', 'active passive voice', 'exam tips'",
+        "📚 I know Math, Science & English topics. Try: 'pythagoras theorem' or 'parts of speech'!"
+      ]
+    }
+  ]
+}
